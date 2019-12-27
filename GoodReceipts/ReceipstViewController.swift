@@ -18,7 +18,10 @@ class ReceiptsViewController: UITableViewController {
         
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addItem))
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    }
+    @objc func addItem() {
+        receipts.append(receipt1)
+        tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -29,11 +32,15 @@ class ReceiptsViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = receipts[indexPath.row].number
-        cell.accessoryType = .disclosureIndicator
+        var cell = tableView.dequeueReusableCell(withIdentifier: "cell")
+        if cell == nil {
+            cell = UITableViewCell(style: .value1, reuseIdentifier: "cell")
+        }
+        cell?.textLabel?.text = receipts[indexPath.row].number
+        cell?.accessoryType = .disclosureIndicator
+        cell?.detailTextLabel?.text = receipts[indexPath.row].price.description
 
-        return cell
+        return cell!
     }
 
     
@@ -52,21 +59,22 @@ class ReceiptsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Edit", message: "Please enter new receipt number", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: {
+            textField in textField.placeholder = "Input receipr number here..."
+        })
+        alert.addAction(.init(title: "OK", style: .default, handler: { number in
+            if let number = alert.textFields?.first?.text {
+                self.receipts[indexPath.row].number = number
+                self.tableView.reloadData()
+            }
+        }))
+        alert.addAction(.init(title: "Cancel", style: .destructive, handler: nil))
+        self.present(alert, animated: true)
         
     }
 
     
     // MARK: - Navigation
     
-    /*
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    @objc func addItem() {
-        receipts.append(receipt1)
-        tableView.reloadData()
-    }
 }
