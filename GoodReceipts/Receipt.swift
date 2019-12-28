@@ -8,10 +8,11 @@
 
 import Foundation
 
-struct Receipt {
+struct Receipt: Codable {
+    var id: String?
     var number: String
-    var purchaseItems: [String]
-    var purchaseDate: Data
-    var merchant: String
-    var price: Double
+    var purchaseItems: [String]?
+    var purchaseDate: Date?
+    var merchant: String?
+    var price: Int
 }
